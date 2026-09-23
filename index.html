@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>File Scanner</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed #aaa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: #111827;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #000;
+        }
+
+        #status {
+            margin-top: 20px;
+            color: #555;
+        }
+
+        #qrBox {
+            margin-top: 25px;
+            display: none;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #fileLink {
+            word-break: break-all;
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📁 File Scanner</h1>
+
+    <p class="subtitle">
+        Upload a file and generate a QR code for it.
+    </p>
+
+    <input type="file" id="fileInput">
+
+    <button onclick="uploadFile()">
+        Upload & Generate QR
+    </button>
+
+    <div id="status"></div>
+
+    <div id="qrBox">
+
+        <h2>Scan this QR</h2>
+
+        <div id="qrcode"></div>
+
+        <p>
+            <a id="fileLink" target="_blank">
+                Open File
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+    // YOUR SUPABASE INFORMATION GOES HERE
+
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+
+    const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    async function uploadFile() {
+
+        const fileInput =
+            document.getElementById("fileInput");
+
+        const file =
+            fileInput.files[0];
+
+        const status =
+            document.getElementById("status");
+
+        const qrBox =
+            document.getElementById("qrBox");
+
+        const qrCode =
+            document.getElementById("qrcode");
+
+        const fileLink =
+            document.getElementById("fileLink");
+
+
+        if (!file) {
+
+            status.innerText =
+                "Please select a file first.";
+
+            return;
+        }
+
+
+        status.innerText =
+            "Uploading...";
+
+
+        // Create a unique filename
+
+        const uniqueName =
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .substring(2) +
+            "-" +
+            file.name;
+
+
+        const filePath =
+            uniqueName;
+
+
+        // Upload to Supabase
+
+        const { data, error } =
+            await supabaseClient
+                .storage
+                .from("uploads")
+                .upload(
+                    filePath,
+                    file,
+                    {
+                        cacheControl: "3600",
+                        upsert: false,
+                        contentType: file.type
+                    }
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            status.innerText =
+                "Upload failed: " +
+                error.message;
+
+            return;
+        }
+
+
+        // Get public URL
+
+        const { data: publicData } =
+            supabaseClient
+                .storage
+                .from("uploads")
+                .getPublicUrl(filePath);
+
+
+        const publicURL =
+            publicData.publicUrl;
+
+
+        // Show file link
+
+        fileLink.href =
+            publicURL;
+
+
+        // Remove old QR
+
+        qrCode.innerHTML = "";
+
+
+        // Generate QR
+
+        new QRCode(qrCode, {
+            text: publicURL,
+            width: 220,
+            height: 220
+        });
+
+
+        qrBox.style.display =
+            "block";
+
+
+        status.innerText =
+            "✓ Upload successful!";
+
+    }
+
+</script>
+
+</body>
+</html>
