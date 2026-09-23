@@ -1490,209 +1490,74 @@ async function downloadPoster(){
 
     if(!currentFileURL){
 
-        alert(
-            "Generate a QR first."
-        );
+        alert("Generate a QR first.");
 
         return;
     }
 
 
-    const banner =
-    document.getElementById(
-        "banner"
-    );
-
-
-    /*
-       Temporarily create a clean
-       printable poster.
-    */
+    /* CREATE MINIMAL QR POSTER */
 
     const poster =
-    document.createElement(
-        "div"
-    );
+        document.createElement("div");
 
 
     poster.style.position =
-    "fixed";
+        "fixed";
 
     poster.style.left =
-    "-10000px";
+        "-10000px";
 
     poster.style.top =
-    "0";
+        "0";
+
 
     poster.style.width =
-    "700px";
+        "700px";
+
 
     poster.style.background =
-    "#ffffff";
+        "#ffffff";
+
 
     poster.style.color =
-    "#111111";
+        "#111111";
+
 
     poster.style.padding =
-    "35px";
+        "45px 40px";
+
 
     poster.style.fontFamily =
-    "Arial, sans-serif";
+        "Arial, sans-serif";
+
 
     poster.style.textAlign =
-    "center";
-
-    poster.style.borderRadius =
-    "30px";
+        "center";
 
 
     /* HEADER */
 
     const header =
-    document.createElement(
-        "div"
-    );
+        document.createElement("div");
 
 
-    header.style.borderRadius =
-    "24px";
-
-    header.style.overflow =
-    "hidden";
-
-    header.style.minHeight =
-    "190px";
-
-    header.style.display =
-    "flex";
-
-    header.style.alignItems =
-    "center";
-
-    header.style.justifyContent =
-    "center";
-
-    header.style.position =
-    "relative";
+    header.innerText =
+        document.getElementById(
+            "bannerTitle"
+        ).innerText;
 
 
-    /*
-       Use selected banner
-       background.
-    */
-
-    header.style.background =
-    banner.style.background ||
-    "linear-gradient(135deg,#00695c,#26a69a)";
+    header.style.fontSize =
+        "34px";
 
 
-    /* Try to copy custom image */
-
-    const customImage =
-    banner.querySelector(
-        ".banner-custom-image"
-    );
+    header.style.fontWeight =
+        "900";
 
 
-    if(customImage){
-
-        const img =
-        document.createElement(
-            "img"
-        );
-
-        img.src =
-        customImage.src;
-
-        img.crossOrigin =
-        "anonymous";
-
-        img.style.position =
-        "absolute";
-
-        img.style.inset =
-        "0";
-
-        img.style.width =
-        "100%";
-
-        img.style.height =
-        "100%";
-
-        img.style.objectFit =
-        "cover";
-
-
-        header.appendChild(
-            img
-        );
-
-    }
-
-
-    const dark =
-    document.createElement(
-        "div"
-    );
-
-    dark.style.position =
-    "absolute";
-
-    dark.style.inset =
-    "0";
-
-    dark.style.background =
-    "rgba(0,0,0,.30)";
-
-
-    header.appendChild(
-        dark
-    );
-
-
-    const headerText =
-    document.createElement(
-        "div"
-    );
-
-    headerText.style.position =
-    "relative";
-
-    headerText.style.zIndex =
-    "2";
-
-    headerText.style.color =
-    "white";
-
-
-    headerText.innerHTML = `
-
-        <div style="
-            font-size:52px;
-            margin-bottom:8px;
-        ">
-            ${document.getElementById("bannerIcon").innerText}
-        </div>
-
-        <div style="
-            font-size:34px;
-            font-weight:900;
-        ">
-            ${document.getElementById("bannerTitle").innerText}
-        </div>
-
-        <div style="
-            margin-top:8px;
-            font-size:18px;
-        ">
-            ${document.getElementById("bannerSubtitle").innerText}
-        </div>
-    `;
-
-
-    header.appendChild(
-        headerText
-    );
+    header.style.marginBottom =
+        "28px";
 
 
     poster.appendChild(
@@ -1700,189 +1565,96 @@ async function downloadPoster(){
     );
 
 
-    /* FILE NAME */
+    /* SCAN TO OPEN */
 
-    const title =
-    document.createElement(
-        "div"
-    );
+    const scanText =
+        document.createElement("div");
 
 
-    title.innerText =
-    currentFileName;
+    scanText.innerText =
+        "SCAN TO OPEN";
 
 
-    title.style.marginTop =
-    "22px";
+    scanText.style.fontSize =
+        "28px";
 
-    title.style.fontSize =
-    "20px";
 
-    title.style.fontWeight =
-    "700";
+    scanText.style.fontWeight =
+        "900";
 
-    title.style.wordBreak =
-    "break-word";
+
+    scanText.style.letterSpacing =
+        "2px";
+
+
+    scanText.style.marginBottom =
+        "25px";
 
 
     poster.appendChild(
-        title
+        scanText
     );
 
 
-    /* QR */
+    /* QR CODE */
 
-    const qrBox =
-    document.createElement(
-        "div"
-    );
+    const qrContainer =
+        document.createElement("div");
 
 
-    qrBox.style.width =
-    "300px";
+    qrContainer.style.display =
+        "flex";
 
-    qrBox.style.height =
-    "300px";
 
-    qrBox.style.margin =
-    "25px auto";
+    qrContainer.style.justifyContent =
+        "center";
 
-    qrBox.style.padding =
-    "20px";
 
-    qrBox.style.background =
-    "white";
-
-    qrBox.style.border =
-    "1px solid #eeeeee";
-
-    qrBox.style.borderRadius =
-    "25px";
-
-    qrBox.style.display =
-    "flex";
-
-    qrBox.style.alignItems =
-    "center";
-
-    qrBox.style.justifyContent =
-    "center";
+    qrContainer.style.alignItems =
+        "center";
 
 
     const qrSource =
-    document.querySelector(
-        "#qrcode img"
-    );
+        document.querySelector(
+            "#qrcode img"
+        );
+
+
+    if(!qrSource){
+
+        alert(
+            "QR code not found. Generate a QR first."
+        );
+
+        poster.remove();
+
+        return;
+    }
 
 
     const qrImage =
-    document.createElement(
-        "img"
-    );
+        document.createElement("img");
 
 
     qrImage.src =
-    qrSource.src;
+        qrSource.src;
+
 
     qrImage.style.width =
-    "260px";
+        "360px";
+
 
     qrImage.style.height =
-    "260px";
+        "360px";
 
 
-    qrBox.appendChild(
+    qrContainer.appendChild(
         qrImage
     );
 
 
     poster.appendChild(
-        qrBox
-    );
-
-
-    /* INSTRUCTION */
-
-    const instruction =
-    document.createElement(
-        "div"
-    );
-
-
-    instruction.innerText =
-    "SCAN TO OPEN";
-
-
-    instruction.style.fontSize =
-    "25px";
-
-    instruction.style.fontWeight =
-    "900";
-
-    instruction.style.letterSpacing =
-    "2px";
-
-
-    poster.appendChild(
-        instruction
-    );
-
-
-    const sub =
-    document.createElement(
-        "div"
-    );
-
-
-    sub.innerText =
-    "Scan this QR code with your phone camera";
-
-
-    sub.style.marginTop =
-    "8px";
-
-    sub.style.color =
-    "#666";
-
-    sub.style.fontSize =
-    "16px";
-
-
-    poster.appendChild(
-        sub
-    );
-
-
-    /* FOOTER */
-
-    const footer =
-    document.createElement(
-        "div"
-    );
-
-
-    footer.innerText =
-    "Powered by File Scanner";
-
-
-    footer.style.marginTop =
-    "25px";
-
-    footer.style.paddingTop =
-    "18px";
-
-    footer.style.borderTop =
-    "1px solid #eeeeee";
-
-    footer.style.color =
-    "#888";
-
-    footer.style.fontSize =
-    "14px";
-
-
-    poster.appendChild(
-        footer
+        qrContainer
     );
 
 
@@ -1894,33 +1666,29 @@ async function downloadPoster(){
     try{
 
         const canvas =
-        await html2canvas(
-            poster,
-            {
-                scale:2,
+            await html2canvas(
+                poster,
+                {
+                    scale:2,
 
-                backgroundColor:
-                "#ffffff",
-
-                useCORS:true
-            }
-        );
+                    backgroundColor:
+                        "#ffffff"
+                }
+            );
 
 
         const link =
-        document.createElement(
-            "a"
-        );
+            document.createElement("a");
 
 
         link.download =
-        "File-Scanner-Poster.png";
+            "QR-Scanner-Poster.png";
 
 
         link.href =
-        canvas.toDataURL(
-            "image/png"
-        );
+            canvas.toDataURL(
+                "image/png"
+            );
 
 
         document.body.appendChild(
@@ -1940,7 +1708,7 @@ async function downloadPoster(){
         console.error(error);
 
         alert(
-            "Could not create the poster. Try again."
+            "Could not download poster."
         );
 
     }
@@ -1949,6 +1717,7 @@ async function downloadPoster(){
     poster.remove();
 
 }
+   
 
 </script>
 
