@@ -3,8 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>File Scanner</title>
 
@@ -13,8 +12,11 @@ content="width=device-width, initial-scale=1.0">
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- QR Code -->
+<!-- QR Generator -->
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<!-- Poster Download -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 
@@ -33,14 +35,16 @@ body{
     Arial,
     sans-serif;
 
-    background:
-    radial-gradient(circle at top left,#172033 0%,transparent 35%),
-    radial-gradient(circle at bottom right,#18251f 0%,transparent 35%),
-    #08090d;
-
-    color:#fff;
     min-height:100vh;
-    padding:25px 15px;
+
+    color:white;
+
+    background:
+    radial-gradient(circle at 10% 0%,#25314d 0%,transparent 35%),
+    radial-gradient(circle at 90% 100%,#15352d 0%,transparent 35%),
+    #07080c;
+
+    padding:20px 12px 40px;
 }
 
 .container{
@@ -51,74 +55,76 @@ body{
 
 /* HEADER */
 
-.header{
+.site-header{
     text-align:center;
-    margin-bottom:25px;
+    padding:15px 10px 25px;
 }
 
 .logo{
-    width:70px;
-    height:70px;
+    width:72px;
+    height:72px;
+
     margin:auto;
+
+    border-radius:22px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    border-radius:22px;
+    font-size:36px;
 
     background:
-    linear-gradient(135deg,#ffffff,#c9d0ff);
-
-    color:#111;
-
-    font-size:34px;
+    linear-gradient(135deg,#ffffff,#bfc7ff);
 
     box-shadow:
-    0 15px 50px rgba(100,120,255,.25);
+    0 15px 45px rgba(120,130,255,.25);
 }
 
-h1{
+.site-header h1{
+    margin-top:15px;
+
     font-size:32px;
-    margin-top:18px;
+
     letter-spacing:-1px;
 }
 
-.subtitle{
-    margin-top:8px;
+.site-header p{
+    margin-top:7px;
+
     color:#9ca3af;
+
     font-size:15px;
 }
 
-/* CARD */
+/* MAIN CARD */
 
 .card{
-    background:
-    rgba(255,255,255,.055);
+    background:rgba(255,255,255,.055);
 
     border:1px solid rgba(255,255,255,.09);
 
-    backdrop-filter:blur(20px);
+    backdrop-filter:blur(25px);
 
     border-radius:28px;
 
-    padding:25px;
+    padding:22px;
 
     box-shadow:
-    0 25px 80px rgba(0,0,0,.35);
+    0 25px 80px rgba(0,0,0,.4);
 }
 
 /* BANNER */
 
 .banner{
-    border-radius:20px;
+    width:100%;
+    min-height:175px;
+
+    border-radius:22px;
+
     overflow:hidden;
-    margin-bottom:22px;
 
-    background:
-    linear-gradient(135deg,#283593,#5c6bc0);
-
-    min-height:145px;
+    position:relative;
 
     display:flex;
     align-items:center;
@@ -126,70 +132,117 @@ h1{
 
     text-align:center;
 
-    position:relative;
+    background:
+    linear-gradient(135deg,#00695c,#26a69a);
+
+    margin-bottom:20px;
 }
 
-.banner img{
-    width:100%;
-    height:100%;
-    min-height:145px;
-    object-fit:cover;
+.banner-overlay{
+    position:absolute;
+
+    inset:0;
+
+    background:
+    linear-gradient(
+        rgba(0,0,0,.12),
+        rgba(0,0,0,.25)
+    );
 }
 
 .banner-content{
+    position:relative;
+
+    z-index:2;
+
     padding:25px;
 }
 
 .banner-icon{
-    font-size:40px;
+    font-size:46px;
 }
 
 .banner-title{
-    font-size:25px;
-    font-weight:800;
-    margin-top:8px;
+    margin-top:7px;
+
+    font-size:27px;
+
+    font-weight:900;
 }
 
-.banner-text{
-    color:#e5e7eb;
-    margin-top:5px;
+.banner-subtitle{
+    margin-top:6px;
+
+    font-size:14px;
+
+    color:#e8eeee;
 }
 
-/* FILE INPUT */
+/* CUSTOM IMAGE */
 
-.file-area{
-    border:2px dashed #444b5c;
+.banner-custom-image{
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    z-index:0;
+}
+
+.banner.has-image .banner-overlay{
+    background:
+    linear-gradient(
+        rgba(0,0,0,.35),
+        rgba(0,0,0,.55)
+    );
+}
+
+/* FILE PICKER */
+
+.file-picker{
+    display:block;
+
+    padding:30px 15px;
+
+    border:2px dashed #3e4658;
 
     border-radius:20px;
 
-    padding:28px 15px;
-
     text-align:center;
 
-    transition:.2s;
-
     cursor:pointer;
+
+    transition:.2s;
 }
 
-.file-area:hover{
+.file-picker:hover{
     border-color:#fff;
-    background:rgba(255,255,255,.03);
+
+    background:rgba(255,255,255,.035);
 }
 
 .file-icon{
-    font-size:40px;
-    margin-bottom:10px;
+    font-size:42px;
 }
 
-.file-title{
-    font-size:17px;
-    font-weight:700;
+.file-name{
+    margin-top:10px;
+
+    font-weight:800;
+
+    word-break:break-word;
 }
 
-.file-sub{
-    color:#8d94a5;
-    font-size:13px;
+.file-help{
     margin-top:5px;
+
+    color:#858da0;
+
+    font-size:13px;
 }
 
 input[type=file]{
@@ -198,88 +251,93 @@ input[type=file]{
 
 /* BUTTON */
 
-.main-button{
+.primary{
     width:100%;
 
     border:none;
 
-    margin-top:18px;
+    border-radius:16px;
 
     padding:17px;
 
-    border-radius:16px;
+    margin-top:15px;
 
-    background:#fff;
+    background:white;
 
     color:#08090d;
 
     font-size:16px;
 
-    font-weight:800;
+    font-weight:900;
 
     cursor:pointer;
 
     transition:.2s;
 }
 
-.main-button:hover{
+.primary:hover{
     transform:translateY(-2px);
 
     box-shadow:
-    0 10px 35px rgba(255,255,255,.15);
+    0 12px 35px rgba(255,255,255,.16);
 }
 
-.main-button:disabled{
+.primary:disabled{
     opacity:.5;
+
+    transform:none;
 }
 
-/* CUSTOM BANNER */
+/* BANNER CONTROLS */
 
-.custom-section{
-    margin-top:22px;
+.controls{
+    margin-top:25px;
 
-    padding-top:20px;
+    padding-top:22px;
 
     border-top:1px solid rgba(255,255,255,.08);
 }
 
-.section-title{
+.controls-title{
     font-size:14px;
-    font-weight:700;
+
+    font-weight:800;
+
     margin-bottom:12px;
 }
 
-.banner-options{
+.banner-buttons{
     display:grid;
+
     grid-template-columns:
     repeat(4,1fr);
 
     gap:8px;
 }
 
-.banner-option{
+.banner-btn{
+    border:1px solid #333a4a;
+
+    background:#11141b;
+
+    color:#ddd;
+
     padding:12px 5px;
 
     border-radius:13px;
 
-    border:1px solid #343947;
-
-    background:#11141c;
-
-    color:#ddd;
-
     cursor:pointer;
 
-    text-align:center;
-
     font-size:12px;
+
+    font-weight:700;
 }
 
-.banner-option:hover{
-    border-color:#fff;
+.banner-btn:hover{
+    border-color:white;
 }
 
-.url-input{
+.custom-url{
     width:100%;
 
     margin-top:12px;
@@ -288,25 +346,47 @@ input[type=file]{
 
     border-radius:12px;
 
-    border:1px solid #343947;
+    outline:none;
 
-    background:#11141c;
+    border:1px solid #333a4a;
+
+    background:#11141b;
+
+    color:white;
+}
+
+.custom-url:focus{
+    border-color:white;
+}
+
+.small-button{
+    width:100%;
+
+    border:none;
+
+    margin-top:8px;
+
+    padding:13px;
+
+    border-radius:12px;
+
+    background:#242936;
 
     color:white;
 
-    outline:none;
-}
+    font-weight:800;
 
-.url-input:focus{
-    border-color:#fff;
+    cursor:pointer;
 }
 
 /* STATUS */
 
 .status{
+    min-height:22px;
+
     text-align:center;
 
-    margin-top:18px;
+    margin-top:15px;
 
     color:#aeb5c5;
 
@@ -321,55 +401,48 @@ input[type=file]{
     margin-top:25px;
 
     text-align:center;
-
-    animation:fade .4s ease;
 }
 
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(10px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+.result-title{
+    font-size:20px;
+
+    font-weight:900;
 }
 
-.success{
-    font-size:18px;
-    font-weight:800;
-}
+.result-file{
+    margin-top:5px;
 
-.file-name{
-    color:#9ca3af;
+    color:#929aaa;
 
     font-size:13px;
-
-    margin-top:5px;
 
     word-break:break-word;
 }
 
-.qr-wrapper{
-    background:white;
-
-    width:250px;
-    height:250px;
+.qr-preview{
+    width:260px;
+    height:260px;
 
     margin:22px auto;
 
-    padding:15px;
+    padding:18px;
 
-    border-radius:20px;
+    border-radius:22px;
+
+    background:white;
 
     display:flex;
-    justify-content:center;
+
     align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 15px 45px rgba(0,0,0,.35);
 }
 
 #qrcode img{
-    max-width:220px;
+    width:220px !important;
+    height:220px !important;
 }
 
 /* ACTIONS */
@@ -380,79 +453,77 @@ input[type=file]{
     grid-template-columns:
     1fr 1fr;
 
-    gap:10px;
+    gap:9px;
 }
 
 .action{
-    border:none;
-
     padding:14px;
 
     border-radius:14px;
 
-    background:#191d27;
+    border:1px solid #303645;
+
+    background:#171b24;
 
     color:white;
 
-    font-weight:700;
+    font-weight:800;
 
     cursor:pointer;
-
-    border:1px solid #2b3040;
 }
 
 .action:hover{
-    background:#252a36;
+    background:#252b38;
 }
 
-.open{
+.action-main{
     grid-column:1/-1;
 
-    background:#fff;
+    background:white;
 
-    color:#000;
+    color:#08090d;
+
+    border:none;
 }
 
-/* LINK */
-
-.link-box{
-    margin-top:15px;
+.file-link{
+    margin-top:13px;
 
     display:flex;
 
     gap:7px;
 }
 
-.link-box input{
+.file-link input{
     flex:1;
 
     min-width:0;
 
-    background:#10131a;
+    border:1px solid #303645;
 
-    border:1px solid #2b3040;
-
-    color:#aaa;
+    border-radius:11px;
 
     padding:11px;
 
-    border-radius:10px;
+    background:#0f1218;
 
-    font-size:12px;
+    color:#999;
+
+    font-size:11px;
 }
 
-.link-box button{
+.file-link button{
     border:none;
 
-    border-radius:10px;
+    border-radius:11px;
 
-    padding:0 15px;
+    padding:0 14px;
 
-    background:#272c38;
+    background:#252a35;
 
     color:white;
 
-    cursor:pointer;
+    font-weight:700;
 }
 
 /* FOOTER */
@@ -460,33 +531,35 @@ input[type=file]{
 .footer{
     text-align:center;
 
-    color:#606778;
+    color:#606878;
 
     font-size:12px;
 
-    margin-top:22px;
+    margin-top:20px;
 }
 
 /* MOBILE */
 
 @media(max-width:500px){
 
-    body{
-        padding:15px 10px;
-    }
-
     .card{
-        padding:18px;
-        border-radius:22px;
+        padding:17px;
+
+        border-radius:23px;
     }
 
-    h1{
+    .site-header h1{
         font-size:28px;
     }
 
-    .banner-options{
+    .banner-buttons{
         grid-template-columns:
         repeat(2,1fr);
+    }
+
+    .qr-preview{
+        width:245px;
+        height:245px;
     }
 
 }
@@ -499,262 +572,320 @@ input[type=file]{
 
 <div class="container">
 
-    <header class="header">
 
-        <div class="logo">
-            📁
-        </div>
+<header class="site-header">
 
-        <h1>
-            File Scanner
-        </h1>
+    <div class="logo">
+        📁
+    </div>
 
-        <p class="subtitle">
-            Upload anything. Generate a QR.
-            Share instantly.
-        </p>
+    <h1>
+        File Scanner
+    </h1>
 
-    </header>
+    <p>
+        Upload anything • Generate a QR • Share instantly
+    </p>
 
-
-    <main class="card">
+</header>
 
 
-        <!-- BANNER -->
-
-        <div class="banner" id="banner">
-
-            <div class="banner-content">
-
-                <div class="banner-icon"
-                     id="bannerIcon">
-                    📡
-                </div>
-
-                <div class="banner-title"
-                     id="bannerTitle">
-                    Scan & Connect
-                </div>
-
-                <div class="banner-text"
-                     id="bannerText">
-                    One scan. Instant access.
-                </div>
-
-            </div>
-
-        </div>
+<main class="card">
 
 
-        <!-- FILE SELECT -->
+<!-- ==================================================
+     BANNER
+================================================== -->
 
-        <label class="file-area"
-               for="fileInput">
+<div
+    class="banner"
+    id="banner">
 
-            <div class="file-icon">
-                📤
-            </div>
+    <div
+        class="banner-overlay">
+    </div>
 
-            <div class="file-title"
-                 id="fileTitle">
-
-                Choose your file
-
-            </div>
-
-            <div class="file-sub">
-
-                Photo • PDF • Video • Document • Anything
-
-            </div>
-
-        </label>
-
-        <input
-            type="file"
-            id="fileInput"
-        >
-
-
-        <button
-            class="main-button"
-            id="uploadButton"
-            onclick="uploadFile()">
-
-            Upload & Generate QR
-
-        </button>
-
+    <div
+        class="banner-content">
 
         <div
-            class="status"
-            id="status">
+            class="banner-icon"
+            id="bannerIcon">
+
+            📶
 
         </div>
-
-
-        <!-- CUSTOM BANNER -->
-
-        <div class="custom-section">
-
-            <div class="section-title">
-                🎨 Scanner Header
-            </div>
-
-            <div class="banner-options">
-
-                <button
-                    class="banner-option"
-                    onclick="setBanner('wifi')">
-
-                    📶<br>
-                    Free Wi-Fi
-
-                </button>
-
-                <button
-                    class="banner-option"
-                    onclick="setBanner('menu')">
-
-                    🍽️<br>
-                    Menu
-
-                </button>
-
-                <button
-                    class="banner-option"
-                    onclick="setBanner('offer')">
-
-                    🎁<br>
-                    Offer
-
-                </button>
-
-                <button
-                    class="banner-option"
-                    onclick="setBanner('event')">
-
-                    🎟️<br>
-                    Event
-
-                </button>
-
-            </div>
-
-
-            <input
-                class="url-input"
-                id="customImage"
-                placeholder="Paste custom image URL (optional)"
-            >
-
-            <button
-                class="action"
-                style="width:100%;margin-top:10px"
-                onclick="setCustomImage()">
-
-                🖼️ Use Custom Image
-
-            </button>
-
-        </div>
-
-
-        <!-- RESULT -->
 
         <div
-            class="result"
-            id="result">
+            class="banner-title"
+            id="bannerTitle">
 
-            <div class="success">
-                ✓ QR Created
-            </div>
-
-            <div
-                class="file-name"
-                id="resultFileName">
-            </div>
-
-
-            <div class="qr-wrapper">
-
-                <div id="qrcode"></div>
-
-            </div>
-
-
-            <div class="actions">
-
-                <button
-                    class="action open"
-                    onclick="openFile()">
-
-                    📂 Open File
-
-                </button>
-
-
-                <button
-                    class="action"
-                    onclick="shareScanner()">
-
-                    📤 Share Scanner
-
-                </button>
-
-
-                <button
-                    class="action"
-                    onclick="copyLink()">
-
-                    🔗 Copy Link
-
-                </button>
-
-
-                <button
-                    class="action"
-                    onclick="downloadQR()">
-
-                    ⬇️ Download QR
-
-                </button>
-
-            </div>
-
-
-            <div class="link-box">
-
-                <input
-                    id="fileLink"
-                    readonly
-                >
-
-            </div>
+            FREE Wi-Fi
 
         </div>
 
-    </main>
+        <div
+            class="banner-subtitle"
+            id="bannerSubtitle">
 
+            Scan to connect instantly
 
-    <div class="footer">
-
-        File Scanner • Fast • Simple • Shareable
+        </div>
 
     </div>
 
 </div>
 
 
+<!-- ==================================================
+     FILE
+================================================== -->
+
+<label
+    class="file-picker"
+    for="fileInput">
+
+    <div class="file-icon">
+        📤
+    </div>
+
+    <div
+        class="file-name"
+        id="selectedFileName">
+
+        Choose your file
+
+    </div>
+
+    <div class="file-help">
+
+        Photos • PDFs • Videos • Documents • Anything
+
+    </div>
+
+</label>
+
+
+<input
+    type="file"
+    id="fileInput"
+>
+
+
+<button
+    class="primary"
+    id="uploadButton"
+    onclick="uploadFile()">
+
+    Upload & Generate QR
+
+</button>
+
+
+<div
+    class="status"
+    id="status">
+</div>
+
+
+<!-- ==================================================
+     HEADER OPTIONS
+================================================== -->
+
+<section class="controls">
+
+    <div class="controls-title">
+
+        🎨 Choose Scanner Header
+
+    </div>
+
+
+    <div class="banner-buttons">
+
+        <button
+            class="banner-btn"
+            onclick="setBanner('wifi')">
+
+            📶<br>
+            Free Wi-Fi
+
+        </button>
+
+
+        <button
+            class="banner-btn"
+            onclick="setBanner('menu')">
+
+            🍽️<br>
+            Menu
+
+        </button>
+
+
+        <button
+            class="banner-btn"
+            onclick="setBanner('offer')">
+
+            🎁<br>
+            Offer
+
+        </button>
+
+
+        <button
+            class="banner-btn"
+            onclick="setBanner('event')">
+
+            🎟️<br>
+            Event
+
+        </button>
+
+    </div>
+
+
+    <input
+        class="custom-url"
+        id="customImageUrl"
+        placeholder="Paste custom header image URL"
+    >
+
+
+    <button
+        class="small-button"
+        onclick="applyCustomImage()">
+
+        🖼️ Use Custom Header Image
+
+    </button>
+
+</section>
+
+
+<!-- ==================================================
+     RESULT
+================================================== -->
+
+<section
+    class="result"
+    id="result">
+
+    <div class="result-title">
+
+        ✓ QR Ready
+
+    </div>
+
+    <div
+        class="result-file"
+        id="resultFile">
+    </div>
+
+
+    <div class="qr-preview">
+
+        <div id="qrcode"></div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            class="action action-main"
+            onclick="openFile()">
+
+            📂 Open File
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="shareScanner()">
+
+            📤 Share Scanner
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="downloadPoster()">
+
+            🖼️ Download Full Poster
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="copyLink()">
+
+            🔗 Copy Link
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="downloadQR()">
+
+            ⬇️ QR Only
+
+        </button>
+
+    </div>
+
+
+    <div class="file-link">
+
+        <input
+            id="generatedLink"
+            readonly
+        >
+
+        <button
+            onclick="copyLink()">
+
+            Copy
+
+        </button>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+<div class="footer">
+
+    File Scanner • Fast • Simple • Shareable
+
+</div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     SCRIPT
+================================================== -->
 
 <script>
 
-/* =====================================================
+
+/* ==================================================
    SUPABASE
-===================================================== */
+================================================== */
 
 const SUPABASE_URL =
 "https://ljyuhpgwjlgcbpgnmdui.supabase.co";
+
 
 const SUPABASE_KEY =
 "sb_publishable_RH86rGQggXgBJ_rokiypdA_8q4UGyk3";
@@ -767,207 +898,290 @@ window.supabase.createClient(
 );
 
 
-/* =====================================================
+/* ==================================================
    VARIABLES
-===================================================== */
+================================================== */
 
 let currentFileURL = "";
 
-let currentBanner =
-{
-    icon:"📡",
-    title:"Scan & Connect",
-    text:"One scan. Instant access."
+let currentFileName = "";
+
+
+/* ==================================================
+   BANNER DATA
+================================================== */
+
+const banners = {
+
+    wifi:{
+        icon:"📶",
+        title:"FREE Wi-Fi",
+        subtitle:"Scan to connect instantly",
+        background:
+        "linear-gradient(135deg,#00695c,#26a69a)"
+    },
+
+    menu:{
+        icon:"🍽️",
+        title:"DIGITAL MENU",
+        subtitle:"Scan to view our menu",
+        background:
+        "linear-gradient(135deg,#6a1b9a,#ab47bc)"
+    },
+
+    offer:{
+        icon:"🎁",
+        title:"SPECIAL OFFER",
+        subtitle:"Scan to unlock this offer",
+        background:
+        "linear-gradient(135deg,#c62828,#ef5350)"
+    },
+
+    event:{
+        icon:"🎟️",
+        title:"EVENT ACCESS",
+        subtitle:"Scan for instant access",
+        background:
+        "linear-gradient(135deg,#1565c0,#42a5f5)"
+    }
+
 };
 
 
-/* =====================================================
+/* ==================================================
    FILE SELECT
-===================================================== */
+================================================== */
 
 document
 .getElementById("fileInput")
-.addEventListener("change",function(){
+.addEventListener(
+    "change",
+    function(){
 
-    const file=this.files[0];
+        const file =
+        this.files[0];
 
-    if(!file)return;
+        if(!file){
+            return;
+        }
 
-    document
-    .getElementById("fileTitle")
-    .innerText=file.name;
+        currentFileName =
+        file.name;
 
-});
+        document
+        .getElementById(
+            "selectedFileName"
+        )
+        .innerText =
+        file.name;
+
+    }
+);
 
 
-/* =====================================================
-   BANNER
-===================================================== */
+/* ==================================================
+   SET BANNER
+================================================== */
 
 function setBanner(type){
+
+    const data =
+    banners[type];
 
     const banner =
     document.getElementById("banner");
 
-    const icon =
-    document.getElementById("bannerIcon");
+    banner.classList.remove(
+        "has-image"
+    );
 
-    const title =
-    document.getElementById("bannerTitle");
+    const oldImage =
+    banner.querySelector(
+        ".banner-custom-image"
+    );
 
-    const text =
-    document.getElementById("bannerText");
-
-
-    if(type==="wifi"){
-
-        currentBanner={
-            icon:"📶",
-            title:"Free Wi-Fi",
-            text:"Scan to connect instantly."
-        };
-
-        banner.style.background=
-        "linear-gradient(135deg,#00695c,#26a69a)";
+    if(oldImage){
+        oldImage.remove();
     }
 
 
-    if(type==="menu"){
-
-        currentBanner={
-            icon:"🍽️",
-            title:"Digital Menu",
-            text:"Scan to view our menu."
-        };
-
-        banner.style.background=
-        "linear-gradient(135deg,#6a1b9a,#ab47bc)";
-    }
+    banner.style.background =
+    data.background;
 
 
-    if(type==="offer"){
-
-        currentBanner={
-            icon:"🎁",
-            title:"Special Offer",
-            text:"Scan to unlock this offer."
-        };
-
-        banner.style.background=
-        "linear-gradient(135deg,#c62828,#ef5350)";
-    }
+    document
+    .getElementById("bannerIcon")
+    .innerText =
+    data.icon;
 
 
-    if(type==="event"){
-
-        currentBanner={
-            icon:"🎟️",
-            title:"Event Access",
-            text:"Scan for instant access."
-        };
-
-        banner.style.background=
-        "linear-gradient(135deg,#1565c0,#42a5f5)";
-    }
+    document
+    .getElementById("bannerTitle")
+    .innerText =
+    data.title;
 
 
-    icon.innerText=
-    currentBanner.icon;
-
-    title.innerText=
-    currentBanner.title;
-
-    text.innerText=
-    currentBanner.text;
+    document
+    .getElementById("bannerSubtitle")
+    .innerText =
+    data.subtitle;
 
 }
 
 
-/* =====================================================
+/* ==================================================
    CUSTOM IMAGE
-===================================================== */
+================================================== */
 
-function setCustomImage(){
+function applyCustomImage(){
 
     const url =
     document
-    .getElementById("customImage")
+    .getElementById(
+        "customImageUrl"
+    )
     .value
     .trim();
 
 
     if(!url){
 
-        alert("Paste an image URL first.");
+        alert(
+            "Paste an image URL first."
+        );
 
         return;
     }
 
 
     const banner =
-    document.getElementById("banner");
+    document.getElementById(
+        "banner"
+    );
 
 
-    banner.innerHTML=
-    `<img src="${url}"
-          alt="Custom Scanner Image"
-          onerror="alert('Could not load this image URL.')">`;
+    const oldImage =
+    banner.querySelector(
+        ".banner-custom-image"
+    );
+
+
+    if(oldImage){
+        oldImage.remove();
+    }
+
+
+    const image =
+    document.createElement("img");
+
+
+    image.src = url;
+
+    image.className =
+    "banner-custom-image";
+
+
+    image.crossOrigin =
+    "anonymous";
+
+
+    image.onload =
+    function(){
+
+        banner.classList.add(
+            "has-image"
+        );
+
+    };
+
+
+    image.onerror =
+    function(){
+
+        alert(
+            "This image URL could not be loaded."
+        );
+
+        image.remove();
+
+    };
+
+
+    banner.prepend(image);
 
 }
 
 
-/* =====================================================
+/* ==================================================
    UPLOAD
-===================================================== */
+================================================== */
 
 async function uploadFile(){
 
-    const fileInput =
-    document.getElementById("fileInput");
+    const input =
+    document.getElementById(
+        "fileInput"
+    );
+
 
     const file =
-    fileInput.files[0];
+    input.files[0];
 
 
     const status =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
+
 
     const button =
-    document.getElementById("uploadButton");
+    document.getElementById(
+        "uploadButton"
+    );
 
 
     if(!file){
 
-        status.innerText=
+        status.innerText =
         "Please choose a file first.";
 
         return;
     }
 
 
-    button.disabled=true;
+    button.disabled =
+    true;
 
-    button.innerText=
+    button.innerText =
     "Uploading...";
 
 
-    status.innerText=
+    status.innerText =
     "Uploading your file...";
 
 
     try{
 
+
+        const safeName =
+        file.name
+        .replace(
+            /[^a-zA-Z0-9._-]/g,
+            "_"
+        );
+
+
         const uniqueName =
-        Date.now() +
-        "-" +
-        Math.random()
+        Date.now()
+        + "-"
+        + Math.random()
         .toString(36)
-        .substring(2) +
-        "-" +
-        file.name;
+        .substring(2)
+        + "-"
+        + safeName;
 
 
-        const {data,error} =
+        const result =
         await supabaseClient
         .storage
         .from("uploads")
@@ -976,68 +1190,99 @@ async function uploadFile(){
             file,
             {
                 cacheControl:"3600",
+
                 upsert:false,
-                contentType:file.type
+
+                contentType:
+                file.type
             }
         );
 
 
-        if(error){
+        if(result.error){
 
-            throw error;
+            throw result.error;
+
         }
 
 
-        const {data:publicData} =
+        const publicResult =
         supabaseClient
         .storage
         .from("uploads")
-        .getPublicUrl(uniqueName);
+        .getPublicUrl(
+            uniqueName
+        );
 
 
         currentFileURL =
-        publicData.publicUrl;
+        publicResult
+        .data
+        .publicUrl;
 
 
-        createQR(currentFileURL);
+        currentFileName =
+        file.name;
+
+
+        createQR(
+            currentFileURL
+        );
 
 
         document
-        .getElementById("result")
-        .style.display="block";
+        .getElementById(
+            "result"
+        )
+        .style.display =
+        "block";
 
 
         document
-        .getElementById("resultFileName")
-        .innerText=file.name;
+        .getElementById(
+            "resultFile"
+        )
+        .innerText =
+        currentFileName;
 
 
         document
-        .getElementById("fileLink")
-        .value=currentFileURL;
+        .getElementById(
+            "generatedLink"
+        )
+        .value =
+        currentFileURL;
 
 
-        status.innerText=
+        status.innerText =
         "✓ File uploaded successfully.";
 
 
-    }
+        document
+        .getElementById(
+            "result"
+        )
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 
+
+    }
     catch(error){
 
         console.error(error);
 
-        status.innerText=
-        "Upload failed: "+
-        error.message;
+        status.innerText =
+        "Upload failed: "
+        + error.message;
 
     }
-
     finally{
 
-        button.disabled=false;
+        button.disabled =
+        false;
 
-        button.innerText=
+        button.innerText =
         "Upload & Generate QR";
 
     }
@@ -1045,25 +1290,31 @@ async function uploadFile(){
 }
 
 
-/* =====================================================
-   QR
-===================================================== */
+/* ==================================================
+   CREATE QR
+================================================== */
 
 function createQR(url){
 
-    const qr =
-    document.getElementById("qrcode");
+    const box =
+    document.getElementById(
+        "qrcode"
+    );
 
 
-    qr.innerHTML="";
+    box.innerHTML =
+    "";
 
 
     new QRCode(
-        qr,
+        box,
         {
             text:url,
+
             width:220,
+
             height:220,
+
             correctLevel:
             QRCode.CorrectLevel.H
         }
@@ -1072,44 +1323,52 @@ function createQR(url){
 }
 
 
-/* =====================================================
+/* ==================================================
    OPEN FILE
-===================================================== */
+================================================== */
 
 function openFile(){
 
-    if(!currentFileURL)return;
+    if(!currentFileURL){
+        return;
+    }
 
-    window.open(
-        currentFileURL,
-        "_blank"
-    );
+
+    window.location.href =
+    currentFileURL;
 
 }
 
 
-/* =====================================================
-   COPY LINK
-===================================================== */
+/* ==================================================
+   COPY
+================================================== */
 
 async function copyLink(){
 
-    if(!currentFileURL)return;
+    if(!currentFileURL){
+        return;
+    }
 
 
     try{
 
-        await navigator.clipboard
-        .writeText(currentFileURL);
+        await navigator
+        .clipboard
+        .writeText(
+            currentFileURL
+        );
 
-        alert("✓ Link copied!");
-
-    }
-
-    catch{
 
         alert(
-        "Copy failed. Long press the link instead."
+            "✓ File link copied!"
+        );
+
+    }
+    catch(error){
+
+        alert(
+            "Copy failed."
         );
 
     }
@@ -1117,31 +1376,34 @@ async function copyLink(){
 }
 
 
-/* =====================================================
-   SHARE
-===================================================== */
+/* ==================================================
+   SHARE SCANNER
+================================================== */
 
 async function shareScanner(){
 
-    if(!currentFileURL)return;
+    if(!currentFileURL){
+        return;
+    }
 
 
-    const shareData={
+    const shareData = {
 
-        title:"File Scanner",
+        title:
+        currentFileName ||
+        "File Scanner",
 
         text:
-        "Scan or open this file:",
+        "Open this file:",
 
-        url:currentFileURL
+        url:
+        currentFileURL
 
     };
 
 
     if(
-        navigator.share &&
-        navigator.canShare &&
-        navigator.canShare(shareData)
+        navigator.share
     ){
 
         try{
@@ -1151,7 +1413,6 @@ async function shareScanner(){
             );
 
         }
-
         catch(error){
 
             console.log(
@@ -1161,13 +1422,12 @@ async function shareScanner(){
         }
 
     }
-
     else{
 
         await copyLink();
 
         alert(
-        "Sharing isn't supported here. Link copied instead!"
+            "Share isn't supported here. The link was copied."
         );
 
     }
@@ -1175,22 +1435,22 @@ async function shareScanner(){
 }
 
 
-/* =====================================================
-   DOWNLOAD QR
-===================================================== */
+/* ==================================================
+   DOWNLOAD QR ONLY
+================================================== */
 
 function downloadQR(){
 
-    const qr =
+    const qrImage =
     document.querySelector(
         "#qrcode img"
     );
 
 
-    if(!qr){
+    if(!qrImage){
 
         alert(
-        "Generate a QR first."
+            "Generate a QR first."
         );
 
         return;
@@ -1201,22 +1461,496 @@ function downloadQR(){
     document.createElement("a");
 
 
-    link.href=qr.src;
-
-    link.download=
-    "file-scanner-QR.png";
+    link.href =
+    qrImage.src;
 
 
-    document.body.appendChild(link);
+    link.download =
+    "File-Scanner-QR.png";
+
+
+    document.body.appendChild(
+        link
+    );
+
 
     link.click();
 
-    document.body.removeChild(link);
+
+    link.remove();
+
+}
+
+
+/* ==================================================
+   DOWNLOAD FULL POSTER
+================================================== */
+
+async function downloadPoster(){
+
+    if(!currentFileURL){
+
+        alert(
+            "Generate a QR first."
+        );
+
+        return;
+    }
+
+
+    const banner =
+    document.getElementById(
+        "banner"
+    );
+
+
+    /*
+       Temporarily create a clean
+       printable poster.
+    */
+
+    const poster =
+    document.createElement(
+        "div"
+    );
+
+
+    poster.style.position =
+    "fixed";
+
+    poster.style.left =
+    "-10000px";
+
+    poster.style.top =
+    "0";
+
+    poster.style.width =
+    "700px";
+
+    poster.style.background =
+    "#ffffff";
+
+    poster.style.color =
+    "#111111";
+
+    poster.style.padding =
+    "35px";
+
+    poster.style.fontFamily =
+    "Arial, sans-serif";
+
+    poster.style.textAlign =
+    "center";
+
+    poster.style.borderRadius =
+    "30px";
+
+
+    /* HEADER */
+
+    const header =
+    document.createElement(
+        "div"
+    );
+
+
+    header.style.borderRadius =
+    "24px";
+
+    header.style.overflow =
+    "hidden";
+
+    header.style.minHeight =
+    "190px";
+
+    header.style.display =
+    "flex";
+
+    header.style.alignItems =
+    "center";
+
+    header.style.justifyContent =
+    "center";
+
+    header.style.position =
+    "relative";
+
+
+    /*
+       Use selected banner
+       background.
+    */
+
+    header.style.background =
+    banner.style.background ||
+    "linear-gradient(135deg,#00695c,#26a69a)";
+
+
+    /* Try to copy custom image */
+
+    const customImage =
+    banner.querySelector(
+        ".banner-custom-image"
+    );
+
+
+    if(customImage){
+
+        const img =
+        document.createElement(
+            "img"
+        );
+
+        img.src =
+        customImage.src;
+
+        img.crossOrigin =
+        "anonymous";
+
+        img.style.position =
+        "absolute";
+
+        img.style.inset =
+        "0";
+
+        img.style.width =
+        "100%";
+
+        img.style.height =
+        "100%";
+
+        img.style.objectFit =
+        "cover";
+
+
+        header.appendChild(
+            img
+        );
+
+    }
+
+
+    const dark =
+    document.createElement(
+        "div"
+    );
+
+    dark.style.position =
+    "absolute";
+
+    dark.style.inset =
+    "0";
+
+    dark.style.background =
+    "rgba(0,0,0,.30)";
+
+
+    header.appendChild(
+        dark
+    );
+
+
+    const headerText =
+    document.createElement(
+        "div"
+    );
+
+    headerText.style.position =
+    "relative";
+
+    headerText.style.zIndex =
+    "2";
+
+    headerText.style.color =
+    "white";
+
+
+    headerText.innerHTML = `
+
+        <div style="
+            font-size:52px;
+            margin-bottom:8px;
+        ">
+            ${document.getElementById("bannerIcon").innerText}
+        </div>
+
+        <div style="
+            font-size:34px;
+            font-weight:900;
+        ">
+            ${document.getElementById("bannerTitle").innerText}
+        </div>
+
+        <div style="
+            margin-top:8px;
+            font-size:18px;
+        ">
+            ${document.getElementById("bannerSubtitle").innerText}
+        </div>
+    `;
+
+
+    header.appendChild(
+        headerText
+    );
+
+
+    poster.appendChild(
+        header
+    );
+
+
+    /* FILE NAME */
+
+    const title =
+    document.createElement(
+        "div"
+    );
+
+
+    title.innerText =
+    currentFileName;
+
+
+    title.style.marginTop =
+    "22px";
+
+    title.style.fontSize =
+    "20px";
+
+    title.style.fontWeight =
+    "700";
+
+    title.style.wordBreak =
+    "break-word";
+
+
+    poster.appendChild(
+        title
+    );
+
+
+    /* QR */
+
+    const qrBox =
+    document.createElement(
+        "div"
+    );
+
+
+    qrBox.style.width =
+    "300px";
+
+    qrBox.style.height =
+    "300px";
+
+    qrBox.style.margin =
+    "25px auto";
+
+    qrBox.style.padding =
+    "20px";
+
+    qrBox.style.background =
+    "white";
+
+    qrBox.style.border =
+    "1px solid #eeeeee";
+
+    qrBox.style.borderRadius =
+    "25px";
+
+    qrBox.style.display =
+    "flex";
+
+    qrBox.style.alignItems =
+    "center";
+
+    qrBox.style.justifyContent =
+    "center";
+
+
+    const qrSource =
+    document.querySelector(
+        "#qrcode img"
+    );
+
+
+    const qrImage =
+    document.createElement(
+        "img"
+    );
+
+
+    qrImage.src =
+    qrSource.src;
+
+    qrImage.style.width =
+    "260px";
+
+    qrImage.style.height =
+    "260px";
+
+
+    qrBox.appendChild(
+        qrImage
+    );
+
+
+    poster.appendChild(
+        qrBox
+    );
+
+
+    /* INSTRUCTION */
+
+    const instruction =
+    document.createElement(
+        "div"
+    );
+
+
+    instruction.innerText =
+    "SCAN TO OPEN";
+
+
+    instruction.style.fontSize =
+    "25px";
+
+    instruction.style.fontWeight =
+    "900";
+
+    instruction.style.letterSpacing =
+    "2px";
+
+
+    poster.appendChild(
+        instruction
+    );
+
+
+    const sub =
+    document.createElement(
+        "div"
+    );
+
+
+    sub.innerText =
+    "Scan this QR code with your phone camera";
+
+
+    sub.style.marginTop =
+    "8px";
+
+    sub.style.color =
+    "#666";
+
+    sub.style.fontSize =
+    "16px";
+
+
+    poster.appendChild(
+        sub
+    );
+
+
+    /* FOOTER */
+
+    const footer =
+    document.createElement(
+        "div"
+    );
+
+
+    footer.innerText =
+    "Powered by File Scanner";
+
+
+    footer.style.marginTop =
+    "25px";
+
+    footer.style.paddingTop =
+    "18px";
+
+    footer.style.borderTop =
+    "1px solid #eeeeee";
+
+    footer.style.color =
+    "#888";
+
+    footer.style.fontSize =
+    "14px";
+
+
+    poster.appendChild(
+        footer
+    );
+
+
+    document.body.appendChild(
+        poster
+    );
+
+
+    try{
+
+        const canvas =
+        await html2canvas(
+            poster,
+            {
+                scale:2,
+
+                backgroundColor:
+                "#ffffff",
+
+                useCORS:true
+            }
+        );
+
+
+        const link =
+        document.createElement(
+            "a"
+        );
+
+
+        link.download =
+        "File-Scanner-Poster.png";
+
+
+        link.href =
+        canvas.toDataURL(
+            "image/png"
+        );
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        link.remove();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Could not create the poster. Try again."
+        );
+
+    }
+
+
+    poster.remove();
 
 }
 
 </script>
 
 </body>
-
 </html>
